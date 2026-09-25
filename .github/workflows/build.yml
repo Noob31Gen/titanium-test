@@ -24,7 +24,27 @@ jobs:
         with:
           submodules: recursive
       
+      - name: Free Disk Space
+        run: |
+          echo "=== Disk space before cleanup ==="
+          df -h /
+          sudo rm -rf /usr/local/lib/android \
+                      /usr/local/.ghcup \
+                      /usr/local/share/boost \
+                      /usr/share/dotnet \
+                      /usr/lib/dotnet \
+                      /usr/lib/jvm \
+                      /usr/lib/google-cloud-sdk \
+                      /usr/share/swift \
+                      /opt/hostedtoolcache \
+                      /var/lib/docker \
+                      /usr/share/miniconda 2>/dev/null || true
+          sudo docker image prune -a -f 2>/dev/null || true
+          echo "=== Disk space after cleanup ==="
+          df -h /
+      
       - name: Update 
+
         run: |
           if [ ! -d "vanadium" ]; then
             git clone https://github.com/GrapheneOS/Vanadium.git vanadium
