@@ -1,0 +1,10 @@
+.DS_Store
+
+chromium/
+depot_tools/
+extensions/dist/
+keys/
+android-microg-ungoogled-chromium/
+
+*.aab
+*.apk
