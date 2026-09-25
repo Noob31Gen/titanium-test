@@ -1,7 +1,11 @@
 #!/bin/bash
 source common.sh
 set_keys
+if [ ! -d "vanadium" ] || [ ! -f "vanadium/args.gn" ]; then
+    git clone https://github.com/GrapheneOS/Vanadium.git vanadium
+fi
 export VERSION=$(grep -m1 -o '[0-9]\+\(\.[0-9]\+\)\{3\}' vanadium/args.gn)
+
 export CHROMIUM_SOURCE=https://chromium.googlesource.com/chromium/src.git # https://github.com/chromium/chromium.git
 export DEBIAN_FRONTEND=noninteractive
 sudo apt-get update
