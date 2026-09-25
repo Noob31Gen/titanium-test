@@ -15,9 +15,8 @@ enable_openxr = false
 enable_cardboard = false
 enable_remoting = false
 enable_reporting = false
-google_api_key = "x"
-google_default_client_id = "x"
-google_default_client_secret = "x"
+google_default_client_id = "77185425430.apps.googleusercontent.com"
+google_default_client_secret = "OTJgUOQcT7lO7GsGZq2G4IlT"
 
 use_siso = true
 use_login_database_as_backend = true

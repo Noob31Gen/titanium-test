@@ -5,7 +5,7 @@ export VERSION=$(grep -m1 -o '[0-9]\+\(\.[0-9]\+\)\{3\}' vanadium/args.gn)
 export CHROMIUM_SOURCE=https://chromium.googlesource.com/chromium/src.git # https://github.com/chromium/chromium.git
 export DEBIAN_FRONTEND=noninteractive
 sudo apt-get update
-sudo apt-get install -y sudo lsb-release file nano git curl python3 python3-pillow imagemagick librsvg2-bin
+sudo apt-get install -y sudo lsb-release file nano git curl zip unzip python3 python3-pillow imagemagick librsvg2-bin
 sudo dpkg --add-architecture i386; sudo apt-get update; sudo apt-get install -y libgcc-s1:i386
 
 git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git
@@ -23,6 +23,7 @@ rm -rf $SCRIPT_DIR/vanadium/patches/*{detailed,supported}-language*.patch
 rm -rf $SCRIPT_DIR/vanadium/patches/*javascript-optimizer-{site-setting,settings-UI}.patch
 rm -rf $SCRIPT_DIR/vanadium/patches/*component-updates.patch
 rm -rf $SCRIPT_DIR/vanadium/patches/*{pdf,PDF,for-content-public,toolbar-button,configs-from-config-app,new-tab-card,predictive-back*}*.patch
+rm -rf $SCRIPT_DIR/vanadium/patches/*disable-browser-sign-in*.patch
 # rm -rf $SCRIPT_DIR/vanadium/patches/*crashpad*.patch
 replace "$SCRIPT_DIR/vanadium/patches" "VANADIUM" "TITANIUM"
 replace "$SCRIPT_DIR/vanadium/patches" "Vanadium" "Titanium"
@@ -47,7 +48,17 @@ mv $(find out/Default/apks -name 'Chrome*.aab') out/tmp/$VERSION-arm64-v8a.aab
 
 export PATH=$PWD/third_party/jdk/current/bin/:$PATH
 export ANDROID_HOME=$PWD/third_party/android_sdk/public
+
+chmod +x $SCRIPT_DIR/microg/apply_microg_smali_patch.sh
+for target_file in out/tmp/$VERSION-armeabi-v7a.apk out/tmp/$VERSION-arm64-v8a.apk out/tmp/$VERSION-arm64-v8a.aab; do
+    if [ -f "$target_file" ]; then
+        $SCRIPT_DIR/microg/apply_microg_smali_patch.sh "$target_file" "$target_file.microg" --no-sign
+        mv -f "$target_file.microg" "$target_file"
+    fi
+done
+
 sign_apk out/tmp/$VERSION-armeabi-v7a.apk out/release/$VERSION-armeabi-v7a.apk
 sign_apk out/tmp/$VERSION-arm64-v8a.apk out/release/$VERSION-arm64-v8a.apk
 sign_aab out/tmp/$VERSION-arm64-v8a.aab out/release/$VERSION-arm64-v8a.aab
+
 rm -rf $SCRIPT_DIR/keys
