@@ -44,7 +44,6 @@ jobs:
           df -h /
       
       - name: Update 
-
         run: |
           if [ ! -d "vanadium" ]; then
             git clone https://github.com/GrapheneOS/Vanadium.git vanadium
@@ -53,6 +52,8 @@ jobs:
           git fetch --tags
           git checkout $(git tag | sort -V | tail -n1)
           cd ..
+          export VERSION=$(grep -m1 -o '[0-9]\+\(\.[0-9]\+\)\{3\}' vanadium/args.gn)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
           git add vanadium
           git config --global user.name 'github-actions[bot]'
@@ -62,10 +63,24 @@ jobs:
             git push
           fi
 
+      - name: Restore CCache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.cache/ccache
+          key: ccache-${{ runner.os }}-${{ env.VERSION }}-${{ github.run_id }}
+          restore-keys: |
+            ccache-${{ runner.os }}-${{ env.VERSION }}-
+            ccache-${{ runner.os }}-
+
       - name: Set ENV
         run: | 
           chmod +x *.sh
           echo "unix_time=$(date +%s)" >> $GITHUB_ENV
+          echo "CCACHE_DIR=/home/runner/.cache/ccache" >> $GITHUB_ENV
+          echo "CCACHE_MAXSIZE=12G" >> $GITHUB_ENV
+          echo "CCACHE_COMPRESS=1" >> $GITHUB_ENV
+          echo "CCACHE_COMPRESSLEVEL=1" >> $GITHUB_ENV
+          echo "CCACHE_SLOPPINESS=time_macros,include_file_mtime,file_macro" >> $GITHUB_ENV
     
       - name: Build
         env:
@@ -98,3 +113,10 @@ jobs:
           subject-path: |
             ${{ env.VERSION }}-${{ env.unix_time }}-arm64-v8a.aab
             ${{ env.VERSION }}-${{ env.unix_time }}-arm64-v8a.apk
+
+      - name: Save CCache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.cache/ccache
+          key: ccache-${{ runner.os }}-${{ env.VERSION }}-${{ github.run_id }}

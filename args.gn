@@ -23,6 +23,15 @@ enable_reporting = false
 google_default_client_id = "77185425430.apps.googleusercontent.com"
 google_default_client_secret = "OTJgUOQcT7lO7GsGZq2G4IlT"
 
+cc_wrapper = "ccache"
+enable_swiftshader = false
+build_with_tflite_lib = false
+use_mlkit_for_aicore = false
+enable_feed_v2 = false
+enable_chrome_browser_cloud_management = false
+enable_service_discovery = false
+enable_mdns = false
+
 use_siso = true
 use_login_database_as_backend = true
 build_contextual_search = false

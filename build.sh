@@ -9,8 +9,17 @@ export VERSION=$(grep -m1 -o '[0-9]\+\(\.[0-9]\+\)\{3\}' vanadium/args.gn)
 export CHROMIUM_SOURCE=https://chromium.googlesource.com/chromium/src.git # https://github.com/chromium/chromium.git
 export DEBIAN_FRONTEND=noninteractive
 sudo apt-get update
-sudo apt-get install -y sudo lsb-release file nano git curl zip unzip python3 python3-pillow imagemagick librsvg2-bin
+sudo apt-get install -y sudo lsb-release file nano git curl zip unzip python3 python3-pillow imagemagick librsvg2-bin ccache
 sudo dpkg --add-architecture i386; sudo apt-get update; sudo apt-get install -y libgcc-s1:i386
+
+export CCACHE_DIR="${CCACHE_DIR:-$HOME/.cache/ccache}"
+export CCACHE_MAXSIZE="${CCACHE_MAXSIZE:-12G}"
+export CCACHE_COMPRESS=1
+export CCACHE_COMPRESSLEVEL=1
+export CCACHE_SLOPPINESS="time_macros,include_file_mtime,file_macro"
+mkdir -p "$CCACHE_DIR"
+echo "=== Initial CCache Stats ==="
+ccache -s || true
 
 git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git
 export PATH="$PWD/depot_tools:$PATH"
@@ -44,6 +53,8 @@ gn gen out/Default # gn args out/Default; echo 'treat_warnings_as_errors = false
 mkdir -p out/tmp out/release
 
 autoninja -C out/Default chrome_public_apk chrome_public_bundle
+echo "=== Post-Build CCache Stats ==="
+ccache -s || true
 mv $(find out/Default/apks -name 'Chrome*.apk') out/tmp/$VERSION-arm64-v8a.apk
 mv $(find out/Default/apks -name 'Chrome*.aab') out/tmp/$VERSION-arm64-v8a.aab
 
