@@ -32,7 +32,7 @@ enable_chrome_browser_cloud_management = false
 enable_service_discovery = false
 enable_mdns = false
 
-use_siso = true
+use_siso = false
 use_login_database_as_backend = true
 build_contextual_search = false
 dcheck_always_on = false

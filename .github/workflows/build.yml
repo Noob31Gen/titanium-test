@@ -77,6 +77,7 @@ jobs:
           chmod +x *.sh
           echo "unix_time=$(date +%s)" >> $GITHUB_ENV
           echo "CCACHE_DIR=/home/runner/.cache/ccache" >> $GITHUB_ENV
+          echo "CCACHE_BASEDIR=${{ github.workspace }}" >> $GITHUB_ENV
           echo "CCACHE_MAXSIZE=12G" >> $GITHUB_ENV
           echo "CCACHE_COMPRESS=1" >> $GITHUB_ENV
           echo "CCACHE_COMPRESSLEVEL=1" >> $GITHUB_ENV

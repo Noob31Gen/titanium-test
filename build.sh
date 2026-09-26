@@ -13,6 +13,7 @@ sudo apt-get install -y sudo lsb-release file nano git curl zip unzip python3 py
 sudo dpkg --add-architecture i386; sudo apt-get update; sudo apt-get install -y libgcc-s1:i386
 
 export CCACHE_DIR="${CCACHE_DIR:-$HOME/.cache/ccache}"
+export CCACHE_BASEDIR="${CCACHE_BASEDIR:-$PWD}"
 export CCACHE_MAXSIZE="${CCACHE_MAXSIZE:-12G}"
 export CCACHE_COMPRESS=1
 export CCACHE_COMPRESSLEVEL=1
