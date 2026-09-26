@@ -64,7 +64,7 @@ jobs:
           fi
 
       - name: Restore CCache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ~/.cache/ccache
           key: ccache-${{ runner.os }}-${{ env.VERSION }}-${{ github.run_id }}
@@ -116,7 +116,7 @@ jobs:
 
       - name: Save CCache
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: ~/.cache/ccache
           key: ccache-${{ runner.os }}-${{ env.VERSION }}-${{ github.run_id }}
