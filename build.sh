@@ -14,13 +14,16 @@ sudo dpkg --add-architecture i386; sudo apt-get update; sudo apt-get install -y 
 
 export CCACHE_DIR="${CCACHE_DIR:-$HOME/.cache/ccache}"
 export CCACHE_BASEDIR="${CCACHE_BASEDIR:-$PWD}"
-export CCACHE_MAXSIZE="${CCACHE_MAXSIZE:-12G}"
-export CCACHE_COMPRESS=1
-export CCACHE_COMPRESSLEVEL=1
-export CCACHE_SLOPPINESS="time_macros,include_file_mtime,file_macro"
+export CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK:-content}"
+export CCACHE_NOHASHDIR="${CCACHE_NOHASHDIR:-1}"
+export CCACHE_CPP2="${CCACHE_CPP2:-1}"
+export CCACHE_MAXSIZE="${CCACHE_MAXSIZE:-8G}"
+export CCACHE_COMPRESS="${CCACHE_COMPRESS:-1}"
+export CCACHE_COMPRESSLEVEL="${CCACHE_COMPRESSLEVEL:-6}"
+export CCACHE_SLOPPINESS="${CCACHE_SLOPPINESS:-include_file_ctime,include_file_mtime,time_macros,file_macro,system_headers}"
 mkdir -p "$CCACHE_DIR"
 echo "=== Initial CCache Stats ==="
-ccache -s || true
+ccache -sv || true
 
 git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git
 export PATH="$PWD/depot_tools:$PATH"
@@ -55,7 +58,7 @@ mkdir -p out/tmp out/release
 
 autoninja -C out/Default chrome_public_apk chrome_public_bundle
 echo "=== Post-Build CCache Stats ==="
-ccache -s || true
+ccache -sv || true
 mv $(find out/Default/apks -name 'Chrome*.apk') out/tmp/$VERSION-arm64-v8a.apk
 mv $(find out/Default/apks -name 'Chrome*.aab') out/tmp/$VERSION-arm64-v8a.aab
 

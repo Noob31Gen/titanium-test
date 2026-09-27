@@ -7,7 +7,7 @@ on:
         description: 'Runner'
         required: true
         type: string
-        default: 'self-hosted' # ubuntu-latest
+        default: 'ubuntu-latest' # ubuntu-latest
   schedule:
     - cron: '0 0 */16 * *'
 
@@ -18,9 +18,9 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runner || 'self-hosted' }}
+    runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runner || 'ubuntu-latest' }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
       
@@ -64,7 +64,7 @@ jobs:
           fi
 
       - name: Restore CCache
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: ~/.cache/ccache
           key: ccache-${{ runner.os }}-${{ env.VERSION }}-${{ github.run_id }}
@@ -76,12 +76,15 @@ jobs:
         run: | 
           chmod +x *.sh
           echo "unix_time=$(date +%s)" >> $GITHUB_ENV
-          echo "CCACHE_DIR=/home/runner/.cache/ccache" >> $GITHUB_ENV
+          echo "CCACHE_DIR=${HOME}/.cache/ccache" >> $GITHUB_ENV
           echo "CCACHE_BASEDIR=${{ github.workspace }}" >> $GITHUB_ENV
-          echo "CCACHE_MAXSIZE=12G" >> $GITHUB_ENV
+          echo "CCACHE_COMPILERCHECK=content" >> $GITHUB_ENV
+          echo "CCACHE_NOHASHDIR=1" >> $GITHUB_ENV
+          echo "CCACHE_CPP2=1" >> $GITHUB_ENV
+          echo "CCACHE_MAXSIZE=8G" >> $GITHUB_ENV
           echo "CCACHE_COMPRESS=1" >> $GITHUB_ENV
-          echo "CCACHE_COMPRESSLEVEL=1" >> $GITHUB_ENV
-          echo "CCACHE_SLOPPINESS=time_macros,include_file_mtime,file_macro" >> $GITHUB_ENV
+          echo "CCACHE_COMPRESSLEVEL=6" >> $GITHUB_ENV
+          echo "CCACHE_SLOPPINESS=include_file_ctime,include_file_mtime,time_macros,file_macro,system_headers" >> $GITHUB_ENV
     
       - name: Build
         env:
@@ -99,7 +102,7 @@ jobs:
           mv $(find chromium/src/out/release -name '*arm64-v8a.apk') $VERSION-${{ env.unix_time }}-arm64-v8a.apk
 
       - name: Publish
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: v${{ env.VERSION }}
@@ -117,7 +120,7 @@ jobs:
 
       - name: Save CCache
         if: always()
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: ~/.cache/ccache
           key: ccache-${{ runner.os }}-${{ env.VERSION }}-${{ github.run_id }}
