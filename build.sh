@@ -17,13 +17,15 @@ export CCACHE_BASEDIR="${CCACHE_BASEDIR:-$PWD}"
 export CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK:-content}"
 export CCACHE_NOHASHDIR="${CCACHE_NOHASHDIR:-1}"
 export CCACHE_CPP2="${CCACHE_CPP2:-1}"
+export CCACHE_DEPEND="${CCACHE_DEPEND:-1}"
 export CCACHE_MAXSIZE="${CCACHE_MAXSIZE:-8G}"
 export CCACHE_COMPRESS="${CCACHE_COMPRESS:-1}"
 export CCACHE_COMPRESSLEVEL="${CCACHE_COMPRESSLEVEL:-6}"
-export CCACHE_SLOPPINESS="${CCACHE_SLOPPINESS:-include_file_ctime,include_file_mtime,time_macros,file_macro,system_headers}"
+export CCACHE_SLOPPINESS="${CCACHE_SLOPPINESS:-include_file_ctime,include_file_mtime,time_macros,file_macro,system_headers,modules}"
 mkdir -p "$CCACHE_DIR"
 echo "=== Initial CCache Stats ==="
 ccache -sv || true
+ccache -z || true
 
 git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git
 export PATH="$PWD/depot_tools:$PATH"

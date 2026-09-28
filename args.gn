@@ -24,6 +24,7 @@ google_default_client_id = "77185425430.apps.googleusercontent.com"
 google_default_client_secret = "OTJgUOQcT7lO7GsGZq2G4IlT"
 
 cc_wrapper = "ccache"
+clang_use_chrome_plugins = false
 enable_swiftshader = false
 build_with_tflite_lib = false
 use_mlkit_for_aicore = false

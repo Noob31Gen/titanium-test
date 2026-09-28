@@ -81,10 +81,11 @@ jobs:
           echo "CCACHE_COMPILERCHECK=content" >> $GITHUB_ENV
           echo "CCACHE_NOHASHDIR=1" >> $GITHUB_ENV
           echo "CCACHE_CPP2=1" >> $GITHUB_ENV
+          echo "CCACHE_DEPEND=1" >> $GITHUB_ENV
           echo "CCACHE_MAXSIZE=8G" >> $GITHUB_ENV
           echo "CCACHE_COMPRESS=1" >> $GITHUB_ENV
           echo "CCACHE_COMPRESSLEVEL=6" >> $GITHUB_ENV
-          echo "CCACHE_SLOPPINESS=include_file_ctime,include_file_mtime,time_macros,file_macro,system_headers" >> $GITHUB_ENV
+          echo "CCACHE_SLOPPINESS=include_file_ctime,include_file_mtime,time_macros,file_macro,system_headers,modules" >> $GITHUB_ENV
     
       - name: Build
         env:
